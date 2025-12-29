@@ -21,3 +21,7 @@ def dashboard(request):
     records = ResumeUpload.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'uploads/dashboard.html', {'records': records})
 
+@login_required
+def view_report(request, pk):
+    record = ResumeUpload.objects.get(id=pk, user=request.user)
+    return render(request, 'uploads/report.html', {'record': record})

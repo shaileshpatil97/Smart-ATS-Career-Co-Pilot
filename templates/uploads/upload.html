@@ -1,8 +1,29 @@
-<form method="post" action="{% url 'upload_resume' %}" enctype="multipart/form-data"
-    class="max-w-xl mx-auto p-6 bg-white shadow rounded">
+{% extends "base.html" %}
+{% block content %}
 
+<div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-xl font-bold mb-4">Analyze Your Resume</h2>
+
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="resume" required class="mb-3">
-    <textarea name="job_description" required class="w-full p-2 border"></textarea>
-    <button class="bg-blue-600 text-white px-4 py-2 rounded">Analyze</button>
-</form>
+
+    <div class="mb-4">
+      <label class="block mb-1 font-medium">Upload Resume (PDF)</label>
+      <input type="file" name="resume" required
+             class="w-full border p-2 rounded">
+    </div>
+
+    <div class="mb-4">
+      <label class="block mb-1 font-medium">Job Description</label>
+      <textarea name="job_description" rows="6" required
+                class="w-full border p-2 rounded"
+                placeholder="Paste full job description here..."></textarea>
+    </div>
+
+    <button class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+      Analyze Resume
+    </button>
+  </form>
+</div>
+
+{% endblock %}

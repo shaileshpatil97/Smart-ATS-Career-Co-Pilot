@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2 class="text-xl font-bold mb-2">Optimized Resume Suggestions</h2>
+
+<div class="bg-white p-4 rounded shadow">
+  <pre class="whitespace-pre-wrap">{{ record.ai_suggestions }}</pre>
+</div>
+
+<a href="/upload/dashboard/" class="mt-4 inline-block text-blue-600">← Back</a>
+
+{% endblock %}
