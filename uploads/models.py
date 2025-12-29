@@ -19,3 +19,7 @@ class ResumeUpload(models.Model):
     ats_score = models.FloatField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
+    missing_keywords = models.TextField(null=True, blank=True)
+    ai_suggestions = models.TextField(null=True, blank=True)
+
+

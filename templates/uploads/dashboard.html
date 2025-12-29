@@ -1,0 +1,13 @@
+<h2>Your ATS Reports</h2>
+<table border="1">
+<tr>
+  <th>File</th><th>Status</th><th>ATS Score</th>
+</tr>
+{% for r in records %}
+<tr>
+<td>{{ r.resume_file.name }}</td>
+<td>{{ r.status }}</td>
+<td>{{ r.ats_score }}</td>
+</tr>
+{% endfor %}
+</table>
