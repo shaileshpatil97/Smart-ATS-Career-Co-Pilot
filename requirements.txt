@@ -1,0 +1,17 @@
+Django==4.2.11
+djangorestframework==3.16.1
+python-dotenv==1.0.1
+
+# AI
+google-generativeai==0.4.1
+
+# PDF Parsing
+pdfminer.six==20231228
+
+# Async background jobs
+celery==5.3.6
+redis==5.0.3
+django-celery-results==2.5.1
+
+# File handling & security
+python-magic==0.4.27

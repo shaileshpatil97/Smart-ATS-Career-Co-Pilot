@@ -1,5 +1,0 @@
-django 
-google-generativeai
-pdfplumber
-python-dotenv
-django-tailwind
