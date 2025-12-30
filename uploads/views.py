@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect , get_object_or_404
 from .models import ResumeUpload
 from analyzer.tasks import process_resume
 from django.contrib.auth.models import User
+from analyzer.tasks import process_resume
 
 
 @login_required

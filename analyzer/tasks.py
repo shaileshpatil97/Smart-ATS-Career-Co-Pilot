@@ -1,30 +1,22 @@
-import pdfplumber
 from celery import shared_task
 from uploads.models import ResumeUpload
 from analyzer.engine import analyze_resume
-
-
-def extract_text_from_pdf(path):
-    text = ""
-    with pdfplumber.open(path) as pdf:
-        for p in pdf.pages:
-            text += p.extract_text() or ""
-    return text
-
+from analyzer.utils import extract_text_from_pdf   # IMPORTANT
 
 @shared_task(bind=True)
 def process_resume(self, resume_id):
-
     resume = ResumeUpload.objects.get(id=resume_id)
+
     resume.status = "PROCESSING"
-    resume.save()
+    resume.save(update_fields=["status"])
 
     try:
-        # extract resume text
+        # 1. Extract PDF text first
         text = extract_text_from_pdf(resume.resume_file.path)
         resume.extracted_text = text
+        resume.save(update_fields=["extracted_text"])
 
-        # REAL NLP ATS
+        # 2. Now run NLP engine
         result = analyze_resume(text, resume.job_description)
 
         resume.ats_score = result["score"]

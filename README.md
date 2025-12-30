@@ -2,7 +2,7 @@
 
 AI-powered resume + job description analyzer built with Django and Celery.
 
-This project lets authenticated users upload a PDF resume and paste a job description. A Celery worker extracts text from the PDF, runs lightweight NLP-style preprocessing (cleaning + tokenization) to compare resume vs job description keywords, computes an ATS-style match score + missing keywords, then uses Google Gemini to generate “optimized bullet point” suggestions.
+This project lets authenticated users upload a PDF resume and paste a job description. A Celery worker extracts text from the PDF, runs lightweight NLP-style preprocessing (cleaning + tokenization) to compare resume vs job description keywords, computes an ATS-style match score + missing keywords, and generates simple suggestions based on the missing keywords.
 
 ## What’s implemented
 
@@ -11,7 +11,7 @@ This project lets authenticated users upload a PDF resume and paste a job descri
 - Text extraction via `pdfminer.six`
 - NLP-style text preprocessing (normalization/tokenization) + keyword matching
 - ATS-style match score and missing keyword list
-- Gemini-generated rewrite suggestions
+- Keyword-based suggestions
 - Dashboard (history) + report view per upload
 - Authentication via Django’s built-in auth (login/logout)
 
@@ -31,7 +31,6 @@ The “NLP” part in this project is intentionally lightweight and practical:
 - django-celery-results (stores task results in DB)
 - SQLite (default)
 - Tailwind (via CDN in templates)
-- google-generativeai (Gemini)
 
 ## Screenshots
 
@@ -62,15 +61,7 @@ pip install -r requirements.txt
 
 ### 2) Configure environment variables
 
-Create a `.env` file in the project root (same folder as `manage.py`):
-
-```env
-GEMINI_API_KEY=your_api_key_here
-```
-
-Notes:
-- The current code reads `GEMINI_API_KEY` in `ats_core/settings.py`.
-- For production, you should also move `SECRET_KEY`, `DEBUG`, and `ALLOWED_HOSTS` to environment variables (they’re currently hardcoded for local dev).
+Optional: create a `.env` file in the project root (same folder as `manage.py`) for standard Django settings you may want to externalize.
 
 ### 3) Start Redis
 
@@ -111,14 +102,14 @@ celery -A ats_core worker -l info -P solo
 1. User uploads a resume + job description.
 2. A `ResumeUpload` record is created and a Celery task is queued.
 3. Worker extracts resume text, computes match score + missing keywords.
-4. Worker calls Gemini to generate rewrite suggestions and stores them.
+4. Worker generates suggestions from missing keywords and stores them.
 5. User views results in the dashboard/report screens.
 
 ## Project structure (key parts)
 
 - `ats_core/` – Django project settings/urls + Celery config
 - `uploads/` – upload views, URLs, and `ResumeUpload` model
-- `analyzer/` – PDF parsing + ATS scoring + Gemini integration + Celery tasks
+- `analyzer/` – PDF parsing + ATS scoring + Celery tasks
 - `templates/` – UI templates (upload, dashboard, report, login)
 
 ## Troubleshooting
@@ -126,5 +117,4 @@ celery -A ats_core worker -l info -P solo
 - If uploads stay in `PENDING`, make sure:
 	- Redis is running
 	- the Celery worker is running
-	- `GEMINI_API_KEY` is set (AI suggestions will fail without it)
 - If PDF text extraction returns empty text, try a different PDF (some PDFs are image-only scans).
