@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow mt-10">
+<h2 class="text-xl font-bold mb-3">Guest Resume Check</h2>
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<input type="file" name="resume" required class="border w-full p-2 mb-3">
+<textarea name="job_description" placeholder="Paste JD..." class="border w-full p-2 mb-3"></textarea>
+<button class="w-full bg-gray-800 text-white py-2 rounded">Analyze</button>
+</form>
+</div>
+{% endblock %}

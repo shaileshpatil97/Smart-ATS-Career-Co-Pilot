@@ -142,3 +142,8 @@ CELERY_RESULT_BACKEND = 'django-db'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+AUTH_USER_MODEL = 'auth.User'
+
+LOGIN_REDIRECT_URL = '/upload/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'

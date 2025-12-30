@@ -25,3 +25,21 @@ def dashboard(request):
 def view_report(request, pk):
     record = ResumeUpload.objects.get(id=pk, user=request.user)
     return render(request, 'uploads/report.html', {'record': record})
+
+def guest_upload(request):
+    if request.method == "POST":
+        ResumeUpload.objects.create(
+            user=None,
+            resume_file=request.FILES['resume'],
+            job_description=request.POST['job_description'],
+            status="PENDING"
+        )
+        return redirect('guest_thankyou')
+
+    return render(request, "uploads/guest_upload.html")
+
+
+# def guest_upload(request):
+#     if request.method == 'POST':
+#         return redirect('guest_thankyou')
+#     return render(request, 'uploads/guest_upload.html')

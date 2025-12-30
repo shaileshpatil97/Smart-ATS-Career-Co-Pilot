@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="flex flex-col items-center justify-center h-[80vh] text-center px-6">
+
+    <h1 class="text-5xl font-bold mb-4 text-gray-800">
+        Smart ATS & Career Co-pilot
+    </h1>
+
+    <p class="text-gray-600 max-w-xl mb-10">
+        AI powered resume analyzer that checks ATS compatibility, improves keyword matching,
+        and gives intelligent career suggestions instantly.
+    </p>
+
+    <div class="flex gap-6">
+        <a href="/accounts/login/"
+           class="px-8 py-3 rounded-lg bg-[#080808] text-white hover:bg-gray-800 transition">
+            Login
+        </a>
+
+        <a href="/accounts/signup/"
+           class="px-8 py-3 rounded-lg border border-[#080808] text-[#080808] hover:bg-[#080808] hover:text-white transition">
+            Sign Up
+        </a>
+
+        <a href="/upload/guest/"
+           class="px-8 py-3 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition">
+            Guest Mode
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}
