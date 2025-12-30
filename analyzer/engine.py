@@ -3,6 +3,12 @@ from nltk.corpus import stopwords
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
 
+import nltk, os
+from django.conf import settings
+
+nltk.data.path.append(settings.NLTK_DATA)
+
+
 STOP = set(stopwords.words("english"))
 _model = None
 
