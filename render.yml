@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: smart-ats-web
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn ats_core.wsgi:application
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-ats-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: smart-ats-redis
+          type: redis
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+
+  - type: worker
+    name: smart-ats-worker
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A ats_core worker -l info --pool=solo
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-ats-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: smart-ats-redis
+          type: redis
+
+databases:
+  - name: smart-ats-db
+    databaseName: smart_ats
+    user: smartats
+
+services:
+  - type: redis
+    name: smart-ats-redis

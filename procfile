@@ -1,2 +1,0 @@
-web: gunicorn ats_core.wsgi:application
-worker: celery -A ats_core worker -l info -P solo
