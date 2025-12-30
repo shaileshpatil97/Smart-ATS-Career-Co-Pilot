@@ -16,3 +16,6 @@ django-celery-results==2.5.1
 # File handling & security
 python-magic==0.4.27
 scikit-learn
+sentence-transformers
+nltk
+pdfplumber

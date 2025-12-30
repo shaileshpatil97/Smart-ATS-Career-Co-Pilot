@@ -1,26 +1,39 @@
+import pdfplumber
 from celery import shared_task
 from uploads.models import ResumeUpload
-from .utils import extract_resume_text, ats_match_score
+from analyzer.engine import analyze_resume
+
+
+def extract_text_from_pdf(path):
+    text = ""
+    with pdfplumber.open(path) as pdf:
+        for p in pdf.pages:
+            text += p.extract_text() or ""
+    return text
+
 
 @shared_task(bind=True)
 def process_resume(self, resume_id):
+
+    resume = ResumeUpload.objects.get(id=resume_id)
+    resume.status = "PROCESSING"
+    resume.save()
+
     try:
-        obj = ResumeUpload.objects.get(id=resume_id)
+        # extract resume text
+        text = extract_text_from_pdf(resume.resume_file.path)
+        resume.extracted_text = text
 
-        text = extract_resume_text(obj.resume_file.path)
-        score, missing = ats_match_score(text, obj.job_description)
+        # REAL NLP ATS
+        result = analyze_resume(text, resume.job_description)
 
-        obj.extracted_text = text[:10000]
-        obj.missing_keywords = ",".join(missing[:100])
-        obj.ats_score = score
-        obj.status = 'COMPLETED'
-        obj.save()
-
-        # 🔥 Call AI task (NO circular import)
-        from analyzer.ai_tasks import run_ai_optimizer
-        run_ai_optimizer.delay(obj.id)
+        resume.ats_score = result["score"]
+        resume.missing_keywords = result["missing"]
+        resume.ai_suggestions = result["suggestions"]
+        resume.status = "COMPLETED"
+        resume.save()
 
     except Exception as e:
-        obj.status = 'FAILED'
-        obj.save()
-        raise self.retry(exc=e, countdown=10, max_retries=3)
+        resume.status = "FAILED"
+        resume.save()
+        raise e

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import upload_resume, dashboard , view_report , guest_upload
+from .views import upload_resume, dashboard , view_report , guest_upload , job_description_api , guest_result  ,resume_status
 from django.views.generic import TemplateView
 
 
@@ -9,6 +9,16 @@ urlpatterns = [
     path('report/<int:pk>/', view_report, name='view_report'),
     path('guest/', guest_upload, name='guest_upload'),
     path('guest/thankyou/', TemplateView.as_view(template_name="uploads/guest_done.html"), name="guest_thankyou"),
+    path('jd/<int:pk>/', job_description_api),
+    path('guest/result/<int:pk>/', guest_result, name='guest_result'),
+    path('status/<int:pk>/', resume_status, name='resume_status'),
+    path('guest/result/<int:pk>/', guest_result, name='guest_result'),
+    path('jd/<int:pk>/', job_description_api, name='job_description_api'),
+    path('status/<int:pk>/', resume_status, name='resume_status'),
+
+
+
+
 
 
 

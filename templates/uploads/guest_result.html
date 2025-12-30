@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-xl mx-auto mt-12 bg-white p-8 rounded shadow text-center">
+
+<h2 class="text-2xl font-bold mb-1">Resume Analysis</h2>
+<p class="text-gray-500 mb-4">Guest Mode (Temporary)</p>
+
+<span id="g-status" class="inline-block px-3 py-1 text-sm rounded bg-gray-200">
+    {{ record.status }}
+</span>
+
+<div class="mt-4">
+    <div class="h-2 bg-gray-200 rounded">
+        <div id="g-bar" class="h-2 bg-green-500 rounded" style="width:0%"></div>
+    </div>
+    <p id="g-score" class="mt-2 text-lg font-semibold">0% Match</p>
+</div>
+
+<a href="{{ record.resume_file.url }}" target="_blank"
+class="block bg-gray-700 text-white py-2 rounded mt-4 hover:bg-black">
+View Resume
+</a>
+
+<div class="bg-yellow-100 text-yellow-800 p-3 rounded mt-5">
+⚠ Guest uploads are temporary. Login or Sign up to permanently save reports.
+</div>
+
+<div class="mt-4">
+<a href="/accounts/login/" class="bg-black text-white px-4 py-2 rounded mr-2">Login</a>
+<a href="/accounts/signup/" class="bg-gray-600 text-white px-4 py-2 rounded">Sign Up</a>
+</div>
+
+</div>
+
+<script>
+function pollGuest(){
+    fetch(`/upload/status/{{ record.id }}/`)
+    .then(r=>r.json())
+    .then(d=>{
+        document.getElementById("g-status").innerText = d.status;
+        document.getElementById("g-score").innerText = d.score+"% Match";
+        document.getElementById("g-bar").style.width = d.score+"%";
+        if(d.status !== "COMPLETED"){
+            setTimeout(pollGuest,3000);
+        }
+    });
+}
+pollGuest();
+</script>
+
+{% endblock %}

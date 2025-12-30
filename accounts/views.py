@@ -32,12 +32,17 @@ def custom_login(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user:
+        if user is not None:
             login(request, user)
-            return redirect('/upload/')
-        return render(request, "registration/login.html", {"error": "Invalid credentials"})
+            return redirect("/upload/")
+
+        # IMPORTANT PART
+        return render(request, "registration/login.html", {
+            "error": "Invalid username or password"
+        })
 
     return render(request, "registration/login.html")
+
 
 
 from django.contrib.auth.decorators import login_required

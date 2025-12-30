@@ -7,24 +7,86 @@
 
 {% for r in records %}
 <div class="bg-white p-4 rounded shadow">
+
   <p class="font-semibold">{{ r.resume_file.name|truncatechars:30 }}</p>
 
-  <span class="inline-block px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
+  <span id="status-{{ r.id }}" data-poll="{{ r.id }}"
+        class="inline-block px-2 py-1 text-xs rounded bg-gray-200 text-gray-700">
     {{ r.status }}
   </span>
 
   <div class="mt-2">
     <div class="h-2 bg-gray-200 rounded">
-      <div class="h-2 bg-green-500 rounded" style="width:{{ r.ats_score }}%"></div>
+      <div id="bar-{{ r.id }}" class="h-2 bg-green-500 rounded"
+           style="width:{{ r.ats_score|floatformat:2|default:'0.00' }}%">
+      </div>
     </div>
-    <p class="text-sm mt-1">{{ r.ats_score }}% Match</p>
+    <p class="text-sm mt-1">
+      <span id="score-{{ r.id }}">{{ r.ats_score|floatformat:2|default:'0.00' }}</span>% Match
+    </p>
   </div>
 
-  <a href="{% url 'view_report' r.id %}" class="block mt-3 text-center bg-blue-600 text-white py-1 rounded">
-    View AI Suggestions
-  </a>
+  <div class="grid grid-cols-3 gap-2 mt-3">
+
+    <a href="{{ r.resume_file.url }}" target="_blank"
+       class="bg-gray-700 text-white py-2 rounded text-center hover:bg-black">
+       View Resume
+    </a>
+
+    <button onclick="openJD('{{ r.id }}')"
+            class="bg-gray-600 text-white py-2 rounded hover:bg-black">
+        View JD
+    </button>
+
+    <a href="/upload/report/{{ r.id }}/"
+       class="bg-black text-white py-2 rounded text-center hover:bg-gray-800">
+       AI Report
+    </a>
+  </div>
 </div>
 {% endfor %}
-
 </div>
+
+<!-- JD Modal -->
+<div id="jdModal" onclick="closeJD()"  class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center">
+  <div class="bg-white p-6 rounded w-[90%] max-w-xl">
+    <h2 class="text-xl font-bold mb-3">Job Description</h2>
+    <pre id="jdContent" class="text-sm whitespace-pre-wrap"></pre>
+    <button onclick="closeJD()" class="mt-4 bg-black text-white px-4 py-2 rounded">Close</button>
+  </div>
+</div>
+
+<script>
+function pollStatus(id){
+    fetch(`/upload/status/${id}/`)
+    .then(r=>r.json())
+    .then(d=>{
+        document.getElementById("status-"+id).innerText = d.status;
+        document.getElementById("score-"+id).innerText = d.score;
+        document.getElementById("bar-"+id).style.width = d.score+"%";
+        if(d.status !== "COMPLETED"){
+            setTimeout(()=>pollStatus(id),3000);
+        }
+    });
+}
+
+document.querySelectorAll("[data-poll]").forEach(el=>{
+    pollStatus(el.dataset.poll);
+});
+
+function openJD(id){
+    fetch(`/upload/jd/${id}/`)
+      .then(r=>r.json())
+      .then(d=>{
+        document.getElementById("jdContent").innerText = d.jd;
+        document.getElementById("jdModal").classList.remove("hidden");
+        document.getElementById("jdModal").classList.add("flex");
+      });
+}
+
+function closeJD(){
+    document.getElementById("jdModal").classList.add("hidden");
+}
+</script>
+
 {% endblock %}
