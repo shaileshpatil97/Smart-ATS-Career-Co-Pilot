@@ -1,8 +1,15 @@
 # Smart ATS & Career Co-Pilot
 
+
 AI-powered resume + job description analyzer built with Django and Celery.
 
 This project lets authenticated users upload a PDF resume and paste a job description. A Celery worker extracts text from the PDF, runs lightweight NLP-style preprocessing (cleaning + tokenization) to compare resume vs job description keywords, computes an ATS-style match score + missing keywords, and generates simple suggestions based on the missing keywords.
+
+
+## Demo Video
+
+[▶️ Click here to watch the video](https://drive.google.com/file/d/1ffmecjfI9RfC-dvah5p6hJ38zranZHFH/view?usp=sharing)
+
 
 ## What’s implemented
 
